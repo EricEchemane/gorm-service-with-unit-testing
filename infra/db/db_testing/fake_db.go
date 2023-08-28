@@ -4,15 +4,18 @@ import (
 	"gopher/infra/db"
 )
 
-type fakeDB struct {
+type Expectations struct {
 	ExpectedError  error
 	ExpectedResult interface{}
 }
 
-func NewFakeDB(expectedError error, expectedResult interface{}) db.IDB {
+type fakeDB struct {
+	Expectations
+}
+
+func NewFakeDB(expectations Expectations) db.IDB {
 	return &fakeDB{
-		ExpectedError:  expectedError,
-		ExpectedResult: expectedResult,
+		Expectations: expectations,
 	}
 }
 
