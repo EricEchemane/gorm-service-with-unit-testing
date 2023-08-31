@@ -22,7 +22,8 @@ func New(dst ...interface{}) db.IDB {
 	}
 
 	dsn := fmt.Sprintf(
-		"host=localhost user=%v password=%v dbname=%v port=%v",
+		"host=%v user=%v password=%v dbname=%v port=%v",
+		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_USERNAME"),
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DATABASE"),
