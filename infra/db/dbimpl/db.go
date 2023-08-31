@@ -3,7 +3,10 @@ package dbimpl
 import (
 	"fmt"
 	"gopher/infra/db"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,11 +16,24 @@ type database struct {
 }
 
 func New(dst ...interface{}) db.IDB {
-	dsn := "host=localhost user=postgres password=19126222 dbname=gopher port=5432"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	dsn := fmt.Sprintf(
+		"host=localhost user=%v password=%v dbname=%v port=%v",
+		os.Getenv("POSTGRES_USERNAME"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DATABASE"),
+		os.Getenv("POSTGRES_PORT"),
+	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		panic("⭕ Failed to connect database")
 	}
+
+	log.Println("✅ Connected to database")
 	db.AutoMigrate(dst...)
 	return &database{
 		*db,
@@ -27,7 +43,6 @@ func New(dst ...interface{}) db.IDB {
 
 func (db *database) RawScan(sql string, dest interface{}, values ...interface{}) error {
 	err := db.Raw(sql, values...).Scan(dest).Error
-	fmt.Println("real db rawscan called")
 	if err != nil {
 		return err
 	}
