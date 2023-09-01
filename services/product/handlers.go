@@ -1,7 +1,7 @@
 package product
 
 import (
-	"gopher/infra/db/dbimpl"
+	"gopher/infra/db"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,8 +11,7 @@ type productHandlers struct {
 	s *Service
 }
 
-func NewHandlers() productHandlers {
-	db := dbimpl.New(&Product{})
+func NewHandlers(db db.IDB) productHandlers {
 	return productHandlers{
 		s: NewService(db),
 	}
@@ -21,6 +20,7 @@ func NewHandlers() productHandlers {
 func (h productHandlers) GetProducts(c *gin.Context) {
 	products, err := h.s.GetProducts()
 	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -31,6 +31,7 @@ func (h productHandlers) FindById(c *gin.Context) {
 	id := c.Params.ByName("id")
 	product, err := h.s.FindById(id)
 	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	if product == nil {

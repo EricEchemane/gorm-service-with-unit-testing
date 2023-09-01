@@ -7,6 +7,6 @@ type Product struct {
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	Code      string     `json:"code"`
+	Name      string     `json:"name"`
 	Price     uint       `json:"price"`
 }

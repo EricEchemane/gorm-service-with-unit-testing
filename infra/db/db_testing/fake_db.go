@@ -2,11 +2,13 @@ package dbtesting
 
 import (
 	"gopher/infra/db"
+	"reflect"
 )
 
 type Expectations struct {
 	ExpectedError  error
 	ExpectedResult interface{}
+	TestName       string
 }
 
 type fakeDB struct {
@@ -20,5 +22,14 @@ func NewFakeDB(expectations Expectations) db.IDB {
 }
 
 func (f *fakeDB) RawScan(sql string, dest interface{}, values ...interface{}) error {
+	if f.ExpectedResult != nil && isAPointer(f.ExpectedResult) {
+		destValue := reflect.ValueOf(dest)
+		sourceValue := reflect.ValueOf(f.ExpectedResult)
+		destValue.Elem().Set(sourceValue)
+	}
 	return f.ExpectedError
+}
+
+func isAPointer(v interface{}) bool {
+	return reflect.TypeOf(v).Kind() == reflect.Ptr
 }
