@@ -1,31 +1,30 @@
 package main
 
 import (
-	"gopher/infra/db/dbimpl"
 	"gopher/services/product"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
+)
+
+var (
+	g errgroup.Group
 )
 
 func main() {
-
 	var ginMode string
 	if os.Getenv("GIN_MODE") == "dev" {
 		ginMode = gin.DebugMode
 	} else {
 		ginMode = gin.ReleaseMode
 	}
-
 	gin.SetMode(ginMode)
-	r := gin.Default()
 
-	db := dbimpl.New(&product.Product{})
+	product.NewServer(&g)
 
-	ph := product.NewHandlers(db)
-	r.Group("/products").GET("/", ph.GetProducts).GET("/:id", ph.FindById)
-
-	log.Println("🚀 Server is running")
-	r.Run()
+	if err := g.Wait(); err != nil {
+		log.Fatal(err)
+	}
 }
