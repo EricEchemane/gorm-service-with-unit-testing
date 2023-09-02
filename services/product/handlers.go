@@ -8,12 +8,12 @@ import (
 )
 
 type productHandlers struct {
-	s *Service
+	s *Store
 }
 
 func NewHandlers(db db.IDB) productHandlers {
 	return productHandlers{
-		s: NewService(db),
+		s: NewStore(db),
 	}
 }
 

@@ -2,15 +2,15 @@ package product
 
 import "gopher/infra/db"
 
-type Service struct {
+type Store struct {
 	db db.IDB
 }
 
-func NewService(db db.IDB) *Service {
-	return &Service{db: db}
+func NewStore(db db.IDB) *Store {
+	return &Store{db: db}
 }
 
-func (s *Service) GetProducts() ([]Product, error) {
+func (s *Store) GetProducts() ([]Product, error) {
 	var products []Product
 	err := s.db.RawScan("SELECT * FROM products LIMIT 10", &products)
 	if err != nil {
@@ -19,7 +19,7 @@ func (s *Service) GetProducts() ([]Product, error) {
 	return products, nil
 }
 
-func (s *Service) FindById(id string) (*Product, error) {
+func (s *Store) FindById(id string) (*Product, error) {
 	var product *Product
 	err := s.db.RawScan("SELECT * FROM products WHERE id = ?", &product, id)
 	if err != nil {

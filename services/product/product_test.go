@@ -24,7 +24,7 @@ func TestGetProducts(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.TestName, func(t *testing.T) {
 			fakeDb := dbtesting.NewFakeDB(tc)
-			service := product.NewService(fakeDb)
+			service := product.NewStore(fakeDb)
 			_, err := service.GetProducts()
 			if tc.ExpectedError == nil && err != nil {
 				t.Fatalf("Expected to have no error but got %q", err)
@@ -53,7 +53,7 @@ func TestFindById(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.TestName, func(t *testing.T) {
 			fakeDb := dbtesting.NewFakeDB(tc)
-			service := product.NewService(fakeDb)
+			service := product.NewStore(fakeDb)
 			_, err := service.FindById("1")
 			if tc.ExpectedError == nil && err != nil {
 				t.Fatalf("Expected to have no error but got %q", err)

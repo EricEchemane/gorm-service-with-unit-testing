@@ -2,6 +2,7 @@ package main
 
 import (
 	"gopher/infra/db/dbimpl"
+	"gopher/services/identity"
 	"gopher/services/product"
 	"log"
 	"os"
@@ -23,7 +24,7 @@ func main() {
 	}
 	gin.SetMode(ginMode)
 
-	db := dbimpl.New(&product.Product{})
+	db := dbimpl.New(&product.Product{}, &identity.User{})
 
 	product.NewServer(&g, db)
 
