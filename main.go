@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gopher/infra/db/dbimpl"
 	"gopher/services/product"
 	"log"
 	"os"
@@ -22,7 +23,9 @@ func main() {
 	}
 	gin.SetMode(ginMode)
 
-	product.NewServer(&g)
+	db := dbimpl.New(&product.Product{})
+
+	product.NewServer(&g, db)
 
 	if err := g.Wait(); err != nil {
 		log.Fatal(err)

@@ -10,7 +10,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/tj/assert"
+	"golang.org/x/sync/errgroup"
 )
+
+func TestServer(t *testing.T) {
+	var g errgroup.Group
+	fakeDb := dbtesting.NewFakeDB(dbtesting.Expectations{})
+	product.NewServer(&g, fakeDb)
+}
 
 func TestGetProductsHandler(t *testing.T) {
 	testCases := []struct {

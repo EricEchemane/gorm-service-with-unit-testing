@@ -15,7 +15,13 @@ type database struct {
 	gorm.DB
 }
 
+var singleInstanceDB *database
+
 func New(dst ...interface{}) db.IDB {
+	if singleInstanceDB != nil {
+		return singleInstanceDB
+	}
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -34,12 +40,16 @@ func New(dst ...interface{}) db.IDB {
 		panic("⭕ Failed to connect database")
 	}
 
-	log.Println("✅ Connected to database")
-	db.AutoMigrate(dst...)
-	return &database{
-		*db,
+	err = db.AutoMigrate(dst...)
+	if err != nil {
+		panic("⭕ Failed to migrate database")
 	}
 
+	log.Println("✅ Connected to database")
+	singleInstanceDB = &database{
+		*db,
+	}
+	return singleInstanceDB
 }
 
 func (db *database) RawScan(sql string, dest interface{}, values ...interface{}) error {

@@ -1,8 +1,8 @@
 package product
 
 import (
-	"gopher/infra/db/dbimpl"
-	"gopher/middleware"
+	"gopher/infra/db"
+	// "gopher/middleware"
 	"log"
 	"net/http"
 
@@ -10,13 +10,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewServer(g *errgroup.Group) {
+func NewServer(g *errgroup.Group, db db.IDB) {
 	router := gin.Default()
 
-	db := dbimpl.New(&Product{})
-
 	handlers := NewHandlers(db)
-	r := router.Group("/products").Use(middleware.Auth())
+	r := router.Group("/products").Use()
 	{
 		r.GET("/", handlers.GetProducts)
 		r.GET("/:id", handlers.FindById)
