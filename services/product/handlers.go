@@ -11,8 +11,8 @@ type productHandlers struct {
 	s *Store
 }
 
-func NewHandlers(db db.IDB) productHandlers {
-	return productHandlers{
+func NewHandlers(db db.IDB) *productHandlers {
+	return &productHandlers{
 		s: NewStore(db),
 	}
 }

@@ -10,9 +10,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewServer(g *errgroup.Group, db db.IDB) {
-	router := gin.Default()
-
+func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
 	handlers := NewHandlers(db)
 	r := router.Group("/products").Use()
 	{

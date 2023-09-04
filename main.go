@@ -23,10 +23,12 @@ func main() {
 		ginMode = gin.ReleaseMode
 	}
 	gin.SetMode(ginMode)
+	router := gin.Default()
 
 	db := dbimpl.New(&product.Product{}, &identity.User{})
 
-	product.NewServer(&g, db)
+	product.NewServer(&g, db, router)
+	identity.NewServer(&g, db, router)
 
 	if err := g.Wait(); err != nil {
 		log.Fatal(err)

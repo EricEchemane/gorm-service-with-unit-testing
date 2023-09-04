@@ -16,7 +16,7 @@ import (
 func TestServer(t *testing.T) {
 	var g errgroup.Group
 	fakeDb := dbtesting.NewFakeDB(dbtesting.Expectations{})
-	product.NewServer(&g, fakeDb)
+	product.NewServer(&g, fakeDb, gin.Default())
 }
 
 func TestGetProductsHandler(t *testing.T) {

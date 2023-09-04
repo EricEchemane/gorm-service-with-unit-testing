@@ -59,3 +59,11 @@ func (db *database) RawScan(sql string, dest interface{}, values ...interface{})
 	}
 	return nil
 }
+
+func (db *database) Insert(dest interface{}) error {
+	err := db.Create(dest).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
