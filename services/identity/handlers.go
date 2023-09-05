@@ -28,16 +28,23 @@ func (h *identityHandlers) CreateIdentity(c *gin.Context) {
 		return
 	}
 
-	user, err := h.s.Create(&dto)
-	if strings.Contains(err.Error(), "users_username_key") {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Username %s is not available", dto.Username)})
-		return
-	}
-
+	dto.Password, err = HashPassword(dto.Password)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
+	user, err := h.s.Create(&dto)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "users_username_key") {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Username %s is not available", dto.Username)})
+			return
+		}
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	user.Password = ""
 	c.IndentedJSON(http.StatusOK, user)
 }
