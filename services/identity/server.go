@@ -11,9 +11,10 @@ import (
 
 func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
 	handlers := NewHandlers(db)
-	r := router.Group("/identity").Use()
+	r := router.Group("/identity")
 	{
 		r.POST("/", handlers.CreateIdentity)
+		r.POST("/login", handlers.Login)
 	}
 
 	server := &http.Server{

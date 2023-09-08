@@ -3,10 +3,12 @@ package identity
 import (
 	"fmt"
 	"gopher/infra/db"
+	"gopher/infra/session"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type identityHandlers struct {
@@ -47,4 +49,28 @@ func (h *identityHandlers) CreateIdentity(c *gin.Context) {
 
 	user.Password = ""
 	c.IndentedJSON(http.StatusOK, user)
+}
+
+func (h *identityHandlers) Login(c *gin.Context) {
+	var dto LoginDTO
+	c.Bind(&dto)
+
+	user, err := h.s.FindByUsername(dto.Username)
+	if err != nil {
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Invalid username or password"})
+		return
+	}
+
+	matched := CheckPasswordHash(dto.Password, user.Password)
+	if !matched {
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Invalid username or password"})
+		return
+	}
+
+	user.Password = ""
+
+	uuid := uuid.New()
+	session_id := uuid.String()
+	session.Set(session_id, user.Username)
+	c.SetCookie("session_id", session_id, 60, "/", "localhost", true, true)
 }

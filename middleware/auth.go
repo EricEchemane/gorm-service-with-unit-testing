@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"gopher/infra/session"
 	"log"
 	"net/http"
 
@@ -16,6 +17,15 @@ func Auth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		username := session.Get(session_id)
+		if username == "" {
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+			c.Abort()
+			return
+		}
+
+		c.Set("username", username)
 		c.Next()
 	}
 }

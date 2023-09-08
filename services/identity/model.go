@@ -33,3 +33,8 @@ type CreateIdentityDTO struct {
 	Password string `json:"password" binding:"required"`
 	Role     Role   `json:"role" binding:"required"`
 }
+
+type LoginDTO struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}

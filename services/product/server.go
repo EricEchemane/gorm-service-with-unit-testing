@@ -2,6 +2,8 @@ package product
 
 import (
 	"gopher/infra/db"
+	"gopher/middleware"
+
 	// "gopher/middleware"
 	"log"
 	"net/http"
@@ -12,7 +14,7 @@ import (
 
 func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
 	handlers := NewHandlers(db)
-	r := router.Group("/products").Use()
+	r := router.Group("/products").Use(middleware.Auth())
 	{
 		r.GET("/", handlers.GetProducts)
 		r.GET("/:id", handlers.FindById)
