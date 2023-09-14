@@ -9,7 +9,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
+func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) *http.Server {
 	handlers := NewHandlers(db)
 	r := router.Group("/identity")
 	{
@@ -26,4 +26,6 @@ func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
 		log.Default().Println("🚀 Identity server listening on port 8080")
 		return server.ListenAndServe()
 	})
+
+	return server
 }

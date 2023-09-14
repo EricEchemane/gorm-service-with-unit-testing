@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
+func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) *http.Server {
 	handlers := NewHandlers(db)
 	r := router.Group("/products").Use(middleware.Auth())
 	{
@@ -29,4 +29,6 @@ func NewServer(g *errgroup.Group, db db.IDB, router *gin.Engine) {
 		log.Default().Println("🚀 Product server listening on port 8080")
 		return productServer.ListenAndServe()
 	})
+
+	return productServer
 }

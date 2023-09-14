@@ -31,7 +31,7 @@ func TestGetProductsHandler(t *testing.T) {
 			ExpectedStatus: 200,
 		},
 		{
-			TestName:       "/products should return 400",
+			TestName:       "/products should return 500",
 			ExpectedError:  errors.New("Some error"),
 			ExpectedStatus: 500,
 		},
